@@ -35,7 +35,7 @@ def wsRequest(params):
         raise Exception('Webservice call not ok. Got:\n' +soup.prettify())
 
     soup = BeautifulStoneSoup(response)
-    print soup.prettify()
+    #print soup.prettify()
     #status = soup.lfm.get('status')
     return soup.lfm
 
