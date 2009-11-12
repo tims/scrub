@@ -4,7 +4,7 @@ import datetime
 import sys
 import yaml
 
-def getScrobbleSession(sessionsFile, user, password):
+def getScrobbleSession(sessionsFile, user, password, timestamp, authToken):
     sessionsFile = 'sessions.yaml'
     sessions = {}
     try:
@@ -12,7 +12,7 @@ def getScrobbleSession(sessionsFile, user, password):
         sessions = yaml.load(f)
         f.close()
     except:
-        print "Couldn't open sessions.yaml"
+        print "Couldn't open sessions.yaml will authorize from scratch\n"
     if not sessions: sessions = {}
 
     wsSessions = sessions.get('ws', {})
@@ -54,7 +54,7 @@ def main(args):
     timestamp = datetime.datetime.now().strftime('%s')
     authToken = auth.md5(auth.apiSecret + timestamp)
 
-    scrobbleSession, nowplayingUrl, submissionsUrl = getScrobbleSession(sessionsFile, user, password)
+    scrobbleSession, nowplayingUrl, submissionsUrl = getScrobbleSession(sessionsFile, user, password, timestamp, authToken)
     submissions.submission(submissionsUrl, scrobbleSession, artist, track, timestamp, 'P', rating='', length='30', album='', tracknumber='', mbid='')
 
 def usage():
