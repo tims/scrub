@@ -1,27 +1,10 @@
+#!/usr/bin/python
 import submissions, auth
 import datetime
 import sys
 import yaml
 
-sessionsFile = 'sessions.yaml'
-
-args = sys.argv[1:]
-print 'Using:'
-user = args[0]
-password = args[1]
-artist = args[2]
-track = args[3]
-
-print 'Using:'
-print 'User: ' + user
-#print 'Password: ' + password
-print 'Artist: ' + artist
-print 'Track: ' + track
-
-timestamp = datetime.datetime.now().strftime('%s')
-authToken = auth.md5(auth.apiSecret + timestamp)
-
-def getScrobbleSession(sessionsFile):
+def getScrobbleSession(sessionsFile, user, password):
     sessionsFile = 'sessions.yaml'
     sessions = {}
     try:
@@ -54,7 +37,39 @@ def getScrobbleSession(sessionsFile):
     f.close()
     return scrobbleSession, nowplayingUrl, submissionsUrl
 
-scrobbleSession, nowplayingUrl, submissionsUrl = getScrobbleSession(sessionsFile)
-submissions.submission(submissionsUrl, scrobbleSession, artist, track, timestamp, 'P', rating='', length='30', album='', tracknumber='', mbid='')
+def main(args):
+    sessionsFile = 'sessions.yaml'
+
+    user = args[0]
+    password = args[1]
+    artist = args[2]
+    track = args[3]
+
+    print 'Using:'
+    print 'User: ' + user
+    print 'Password: ' + password
+    print 'Artist: ' + artist
+    print 'Track: ' + track
+
+    timestamp = datetime.datetime.now().strftime('%s')
+    authToken = auth.md5(auth.apiSecret + timestamp)
+
+    scrobbleSession, nowplayingUrl, submissionsUrl = getScrobbleSession(sessionsFile, user, password)
+    submissions.submission(submissionsUrl, scrobbleSession, artist, track, timestamp, 'P', rating='', length='30', album='', tracknumber='', mbid='')
+
+def usage():
+    usage = \
+    """Usage:
+    submit.py <user> <password> <artist> <track>"""
+    print usage
+
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if len(args) < 4:
+        usage()
+        sys.exit()
+    main(args)
+
 
 
